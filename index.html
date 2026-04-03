@@ -643,6 +643,9 @@
   var ALL_COLS = ["排期周","产线","BI","要解决的问题","需求名称","需求内容","交付类型","需求优先级","当前状态","需求团队","需求人","工时（h）","分类","细项分类","备注"];
   var FORM_FIELD_MAP = { "fd排期周": "排期周", "fd产线": "产线", "fdBI": "BI", "fd要解决的问题": "要解决的问题", "fd需求名称": "需求名称", "fd需求内容": "需求内容", "fd交付类型": "交付类型", "fd需求优先级": "需求优先级", "fd当前状态": "当前状态", "fd需求团队": "需求团队", "fd需求人": "需求人", "fd工时": "工时（h）", "fd分类": "分类", "fd细项分类": "细项分类", "fd备注": "备注" };
   var STORAGE_KEY = "bi_demand_board_data";
+  /** 与下方 defaultCsv 同步：每次更新内嵌需求数据并发布到 GitHub Pages 时，把版本号 +1（或改日期），所有人会自动清空旧 localStorage 并加载新内嵌数据 */
+  var EMBEDDED_DATA_VERSION = "20260403-2";
+  var STORAGE_VERSION_KEY = "bi_demand_board_embed_version";
   var SECRET_CODES = ["10025719", "10889", "10029904", "23810", "10029007"];
   var rawData = [];
   var filteredData = [];
@@ -1573,6 +1576,13 @@
       applyFilters();
     });
   });
+  try {
+    var prevVer = localStorage.getItem(STORAGE_VERSION_KEY);
+    if (prevVer !== EMBEDDED_DATA_VERSION) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.setItem(STORAGE_VERSION_KEY, EMBEDDED_DATA_VERSION);
+    }
+  } catch (e) {}
   try {
     var saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
